@@ -6,6 +6,7 @@ import misaka as m
 from groups.models import Group
 
 # Create your models here.
+User = get_user_model()
 
 class Post(models.Model):
     user = models.ForeignKey(User, related_name='posts')
