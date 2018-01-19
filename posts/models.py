@@ -18,7 +18,7 @@ class Post(models.Model):
     def __str__(self):
         return self.message
 
-    def save(self, *arg, **kwargs):
+    def save(self, *args, **kwargs):
         self.message_html = m.html(self.message)
         super().save(*args, **kwargs)
     
@@ -26,7 +26,6 @@ class Post(models.Model):
         return reverse('posts:single',
                         kwargs={'username':self.user.username,
                                 'pk':self.pk})
-    
     class Meta:
         ordering = ['-created_at']
         unique_together = ['user', 'message']
