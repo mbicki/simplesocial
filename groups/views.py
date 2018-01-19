@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from groups.models import Group, GroupMember
+from . import models
 # Create your views here.
 
 class CreateGroup(LoginRequiredMixin, generic.CreateView):
@@ -25,7 +26,7 @@ class JoinGroup(LoginRequiredMixin, generic.RedirectView):
         try:
             GroupMember.objects.create(user=self.request.user, group=group)
         except IntegrityError:
-            messages.warning(self.request=,('Warning already a member!'))
+            messages.warning(self.request, 'Warning already a member!')
         else:
             messages.success(self.request, 'You are now a member')
         
