@@ -6,6 +6,7 @@ from django.views import generic
 from braces.views import SelectRelatedMixin
 from . import models
 from . import forms
+#from groups.models import Group
 from django.contrib.auth import get_user_model
 
 # Create your views here.
@@ -43,6 +44,8 @@ class PostDetail(SelectRelatedMixin, generic.DetailView):
 class CreatePost(LoginRequiredMixin, SelectRelatedMixin, generic.CreateView):
     fields = ('message', 'group')
     model = models.Post
+    #views.CreatePost.model.group.get_queryset = Group.objects.filter(memberships__user=str(User.id))
+    #print(Group.objects.filter(memberships__user=user))  
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
