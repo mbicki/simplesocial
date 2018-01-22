@@ -23,7 +23,15 @@ class Group(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         self.description_html = m.html(self.description)
-        super().save(*args, **kwargs)
+        i=0
+        result=None
+        while result is None:
+            try:
+                super().save(*args, **kwargs)
+                result = True
+            except:
+                self.slug=self.slug+str(i)
+
     
     def get_absolute_url(self):
         return reverse('groups:single', kwargs={'slug': self.slug})
