@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import Http404
 from django.views import generic
 from braces.views import SelectRelatedMixin
@@ -38,7 +38,7 @@ class PostDetail(SelectRelatedMixin, generic.DetailView):
 
     def get_queryset(self):
         query = super().get_queryset()
-        return queryset.filter(user__username__isexact=self.kwargs.get('username'))
+        return models.Post.objects.filter(user__username=self.kwargs.get('username'))
 
 class CreatePost(LoginRequiredMixin, SelectRelatedMixin, generic.CreateView):
     fields = ('message', 'group')
@@ -47,8 +47,12 @@ class CreatePost(LoginRequiredMixin, SelectRelatedMixin, generic.CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user
-        self.object.save()
-        return super().form_valid(form)
+        if self.object.user in self.object.group.members.iterator():
+            self.object.save()
+            return super().form_valid(form)
+        else:
+            messages.warning(self.request, 'Not a member!')
+            return self.form_invalid(form)
 
 class DeletePost(LoginRequiredMixin, SelectRelatedMixin, generic.DeleteView):
     model = models.Post
